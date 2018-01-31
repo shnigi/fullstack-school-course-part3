@@ -38,7 +38,7 @@ app.get('/api/persons/:id', (req, res) => {
   if (person) {
     res.json(person);
   } else {
-    res.send('<h1>Ei löydy!</h1>');
+    res.status(404).end();
   }
 });
 
