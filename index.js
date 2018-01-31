@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 // app.use(morgan('tiny'));
 
 morgan.token('body', function (req) {
-  console.log('response', persons);
   return JSON.stringify(req.body)
 })
 
