@@ -2,16 +2,17 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan')
+const cors = require('cors')
 
+app.use(cors())
 app.use(bodyParser.json());
-// app.use(morgan('tiny')); 
+// app.use(morgan('tiny'));
 
 morgan.token('body', function (req) {
   return JSON.stringify(req.body)
 })
 
 app.use(morgan(':method :url :body - :response-time ms'))
-
 
 let persons = [
     {
@@ -86,7 +87,7 @@ app.post('/api/persons', (req, res) => {
     name: body.name,
     number: body.number,
     date: new Date(),
-    id: Date.parse(Date())/1000
+    id: Date.parse(Date())/1000 + Math.floor(Math.random() * 99) + 1
   }
 
   persons = persons.concat(personData)
