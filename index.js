@@ -1,5 +1,7 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 let persons = [
     {
@@ -47,6 +49,27 @@ app.delete('/api/persons/:id', (req, res) => {
   const person = persons.filter(person => person.id !== id);
 
   res.status(204).end();
+})
+
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+  console.log('body', body);
+
+  if (body === undefined) {
+    return res.status(400).json({error: 'content missing'})
+  }
+
+  const personData = {
+    name: body.name,
+    number: body.number,
+    date: new Date(),
+    id: Date.parse(Date())/1000
+  }
+
+  persons = persons.concat(personData)
+
+  res.json(persons)
 })
 
 app.get('/info', (req, res) => {
