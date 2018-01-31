@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 // app.use(morgan('tiny'));
 
 morgan.token('body', function (req) {
+  console.log('response', persons);
   return JSON.stringify(req.body)
 })
 
@@ -58,8 +59,15 @@ app.get('/api/persons/:id', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
   const person = persons.filter(person => person.id !== id);
-
+  // console.log('PERSON', person);
+  // res.json(person);
   res.status(204).end();
+})
+
+app.put('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const person = persons.find(person => person.id === id);
+  // TODO
 })
 
 const nameExists = (data) => {
