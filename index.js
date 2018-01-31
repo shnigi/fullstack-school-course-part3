@@ -51,13 +51,25 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end();
 })
 
+const nameExists = (data) => {
+  const name = data.name;
+  const person = persons.find(person => person.name === name);
+  if (person) {
+    return true;
+  }
+}
 
 app.post('/api/persons', (req, res) => {
   const body = req.body
-  console.log('body', body);
 
   if (body === undefined) {
     return res.status(400).json({error: 'content missing'})
+  }
+  if (!body.name || !body.number) {
+    return res.status(400).json({error: 'Name or number missing'})
+  }
+  if (nameExists(body)) {
+    return res.status(400).json({error: 'Name must be unique'})
   }
 
   const personData = {
