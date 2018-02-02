@@ -1,3 +1,4 @@
+const mongoService = require('./models/tietokanta');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -15,35 +16,25 @@ morgan.token('body', function (req) {
 
 app.use(morgan(':method :url :body - :response-time ms'))
 
-let persons = [
-    {
-    "name": "Jaska Jokunen",
-    "number": "040-123456",
-    "id": 1
-    },
-    {
-      "name": "Martti Tienari",
-      "number": "040-123456",
-      "id": 2
-    },
-    {
-      "name": "Arto Järvinen",
-      "number": "040-123456",
-      "id": 3
-    },
-    {
-      "name": "niki",
-      "number": "11111",
-      "id": 4
-    }
-  ];
-
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>');
 });
 
+const formatPerson = (person) => {
+  console.log('person', person);
+  return {
+    name: person.name,
+    number: person.number,
+    id: person._id
+  }
+}
+
 app.get('/api/persons', (req, res) => {
-  res.json(persons);
+    mongoService
+    .find({}, {__v: 0})
+    .then(result => {
+      res.json(result.map(formatPerson));
+      })
 });
 
 app.get('/api/persons/:id', (req, res) => {
