@@ -37,20 +37,25 @@ app.get('/api/persons', (req, res) => {
 });
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find(person => person.id === id);
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  mongoService
+     .findById(req.params.id, {__v: 0})
+     .then(result => {
+       res.json(formatPerson(result));
+     })
+     .catch(error => {
+       res.status(400).send({ error: 'malformatted id' })
+     })
 });
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  // const person = persons.filter(person => person.id !== id);
-  // res.json(person);
-  res.status(204).end();
+  mongoService
+    .findByIdAndRemove(req.params.id, {__v: 0})
+    .then(result => {
+      res.status(204).end();
+    })
+    .catch(error => {
+      res.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 app.put('/api/persons/:id', (req, res) => {
@@ -93,10 +98,15 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  const contactsAmount = persons.length;
-  const date = Date();
-  res.send(`<h1>Puhelinluettelossa on ${contactsAmount} henkilön tiedot</h1>
-            <p>${date}</p>`);
+  mongoService
+  .find({}, {__v: 0})
+  .then(result => {
+    console.log('result', result);
+    const contactsAmount = result.length;
+    const date = Date();
+    res.send(`<h1>Puhelinluettelossa on ${contactsAmount} henkilön tiedot</h1>
+          <p>${date}</p>`);
+    })
 });
 
 const PORT = process.env.PORT || 3001
