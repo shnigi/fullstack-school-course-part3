@@ -96,11 +96,20 @@ app.post('/api/persons', (req, res) => {
     number: body.number
   });
 
-  personData
-    .save()
-    .then(result => {
-      res.status(201).end();
-      })
+  mongoService
+  .find({name: body.name})
+  .then(result => {
+    if (result.length > 0) {
+      res.send(405, 'Duplicate found, method Not Allowed');
+    }
+
+    personData
+      .save()
+      .then(result => {
+        res.status(201).end();
+        })
+
+  })
 })
 
 app.get('/info', (req, res) => {
