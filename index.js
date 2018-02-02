@@ -59,9 +59,15 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.put('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find(person => person.id === id);
-  // TODO
+  mongoService
+     .findByIdAndUpdate(req.params.id, req.body, { new: true } )
+     .then(updatedPerson => {
+       res.json(formatPerson(updatedPerson))
+     })
+     .catch(error => {
+       console.log(error)
+       res.status(400).send({ error: 'malformatted id' })
+     })
 })
 
 const nameExists = (data) => {
