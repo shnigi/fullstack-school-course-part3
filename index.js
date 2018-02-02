@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
 });
 
 const formatPerson = (person) => {
-  console.log('person', person);
   return {
     name: person.name,
     number: person.number,
@@ -49,8 +48,7 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
-  const person = persons.filter(person => person.id !== id);
-  // console.log('PERSON', person);
+  // const person = persons.filter(person => person.id !== id);
   // res.json(person);
   res.status(204).end();
 })
@@ -78,20 +76,20 @@ app.post('/api/persons', (req, res) => {
   if (!body.name || !body.number) {
     return res.status(400).json({error: 'Name or number missing'})
   }
-  if (nameExists(body)) {
-    return res.status(400).json({error: 'Name must be unique'})
-  }
+  // if (nameExists(body)) {
+  //   return res.status(400).json({error: 'Name must be unique'})
+  // }
 
-  const personData = {
+  const personData = new mongoService ({
     name: body.name,
-    number: body.number,
-    date: new Date(),
-    id: Date.parse(Date())/1000 + Math.floor(Math.random() * 99) + 1
-  }
+    number: body.number
+  });
 
-  persons = persons.concat(personData)
-
-  res.json(persons)
+  personData
+    .save()
+    .then(result => {
+      res.status(201).end();
+      })
 })
 
 app.get('/info', (req, res) => {
